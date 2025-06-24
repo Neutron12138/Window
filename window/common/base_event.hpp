@@ -22,8 +22,6 @@ namespace window
             Closed,
         };
 
-        static BaseEventRef convert(const base::EventRef &event) { std::dynamic_pointer_cast<BaseEvent>(event); }
-
     public:
         BaseEvent() = default;
         ~BaseEvent() override = default;

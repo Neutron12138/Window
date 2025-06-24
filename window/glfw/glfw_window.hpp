@@ -2,31 +2,19 @@
 
 #include "glfw_resource.hpp"
 
-namespace glfw
+namespace window::glfw
 {
     class GLFWWindow;
     using GLFWWindowRef = base::Ref<GLFWWindow>;
     using GLFWWindowWeakRef = base::WeakRef<GLFWWindow>;
 
-    GLFWwindow *create_glfw_window(int width, int height, const char *title = "",
-                                   GLFWmonitor *monitor = nullptr, GLFWwindow *share = nullptr)
-    {
-        GLFWwindow *window = glfwCreateWindow(width, height, title, monitor, share);
-        if (!window)
-            throw std::runtime_error(base::to_string(
-                "Failed to create GLFW window with width: ", width,
-                ", height: ", height,
-                ", title: \"", title,
-                "\", monitor: ", monitor,
-                ", share: ", share));
-
-        return window;
-    }
-
     /// @brief GLFW窗口
     class GLFWWindow : public GLFWResource
     {
     public:
+        static GLFWwindow *create_glfw_window(int width, int height, const char *title = "",
+                                              GLFWmonitor *monitor = nullptr, GLFWwindow *share = nullptr);
+
         static GLFWWindowRef create(int width, int height, const std::string &title = {},
                                     GLFWmonitor *monitor = nullptr, GLFWwindow *share = nullptr)
         {
@@ -43,7 +31,14 @@ namespace glfw
             m_window = create_glfw_window(width, height, title.data(), monitor, share);
         }
 
-        ~GLFWWindow() override { glfwDestroyWindow(m_window); }
+        ~GLFWWindow() override
+        {
+            if (!m_window)
+                return;
+
+            glfwDestroyWindow(m_window);
+            m_window = nullptr;
+        }
 
     public:
         GLFWwindow *get_window() const { return m_window; }
@@ -53,6 +48,8 @@ namespace glfw
         int should_close() const { return glfwWindowShouldClose(m_window); }
         std::string get_title() const { return glfwGetWindowTitle(m_window); }
         void *get_user_pointer() const { return glfwGetWindowUserPointer(m_window); }
+        glm::ivec2 get_pos() const;
+        glm::ivec2 get_size() const;
 
         void make_context_current() { glfwMakeContextCurrent(m_window); }
         void set_should_close(int value) { glfwSetWindowShouldClose(m_window, value); }
@@ -61,20 +58,7 @@ namespace glfw
         void set_user_pointer(void *pointer) { glfwSetWindowUserPointer(m_window, pointer); }
         void set_pos(const glm::ivec2 &pos) { glfwSetWindowPos(m_window, pos.x, pos.y); }
         void set_size(const glm::ivec2 &size) { glfwSetWindowSize(m_window, size.x, size.y); }
-
-        glm::ivec2 get_pos() const
-        {
-            glm::ivec2 pos;
-            glfwGetWindowPos(m_window, &pos.x, &pos.y);
-            return pos;
-        }
-
-        glm::ivec2 get_size() const
-        {
-            glm::ivec2 size;
-            glfwGetWindowSize(m_window, &size.x, &size.y);
-            return size;
-        }
+        void set_icon(const base::BaseImageRef &image);
     };
 
-} // namespace glfw
+} // namespace window::glfw

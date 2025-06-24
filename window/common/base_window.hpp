@@ -30,10 +30,13 @@ namespace window
     public:
         void request_handle_event(const base::EventRef &event) override
         {
-            if (!BaseEvent::convert(event))
-                throw std::runtime_error(base::to_string(
+            if (!event)
+                throw BASE_MAKE_RUNTIME_ERROR("Unable to handle a null pointer Event object");
+
+            if (!event->is<BaseEvent>())
+                throw BASE_MAKE_RUNTIME_ERROR(
                     "Unsupported event: Event@", event.get(),
-                    ", event type: ", event->get_event_type()));
+                    ", event type: ", event->get_event_type());
 
             EventHandler::request_handle_event(event);
         }

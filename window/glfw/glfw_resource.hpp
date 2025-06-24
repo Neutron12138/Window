@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include "glfw.hpp"
 
-namespace glfw
+namespace window::glfw
 {
     /// @brief GLFW资源
     class GLFWResource : base::Resource
@@ -27,4 +27,4 @@ namespace glfw
         ~GLFWResource() override = default;
     };
 
-} // namespace glfw
+} // namespace window::glfw
