@@ -22,6 +22,7 @@ namespace window::glfw
         }
 
     private:
+        /// @brief GLFW窗口句柄
         GLFWwindow *m_window = nullptr;
 
     public:
@@ -33,9 +34,6 @@ namespace window::glfw
 
         ~GLFWWindow() override
         {
-            if (!m_window)
-                return;
-
             glfwDestroyWindow(m_window);
             m_window = nullptr;
         }

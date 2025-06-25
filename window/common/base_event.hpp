@@ -20,6 +20,10 @@ namespace window
             None,
             /// @brief 窗口关闭
             Closed,
+            /// @brief 窗口大小改变
+            Resized,
+            /// @brief 按键按下或松开
+            Key,
         };
 
     public:

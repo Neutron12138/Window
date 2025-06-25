@@ -2,8 +2,8 @@
 
 namespace window::glfw
 {
-    GLFWwindow *GLFWWindow::create_glfw_window(int width, int height, const char *title = "",
-                                               GLFWmonitor *monitor = nullptr, GLFWwindow *share = nullptr)
+    GLFWwindow *GLFWWindow::create_glfw_window(int width, int height, const char *title,
+                                               GLFWmonitor *monitor, GLFWwindow *share)
     {
         GLFWwindow *window = glfwCreateWindow(width, height, title, monitor, share);
         if (!window)
@@ -33,8 +33,8 @@ namespace window::glfw
 
     void GLFWWindow::set_icon(const base::BaseImageRef &image)
     {
-        GLFWimage img = {image->get_width(),
-                         image->get_height(),
+        GLFWimage img = {static_cast<int>(image->get_width()),
+                         static_cast<int>(image->get_height()),
                          const_cast<unsigned char *>(
                              reinterpret_cast<const unsigned char *>(
                                  image->get_raw_pixels()))};

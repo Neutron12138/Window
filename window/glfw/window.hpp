@@ -2,6 +2,7 @@
 
 #include "../common/base_window.hpp"
 #include "glfw_window.hpp"
+#include "callbacks.hpp"
 
 namespace window::glfw
 {
@@ -17,10 +18,25 @@ namespace window::glfw
         GLFWWindowRef m_window;
 
     public:
-        Window() = default;
-        ~Window() = default;
+        Window(int width, int height, const std::string &title = {},
+               GLFWmonitor *monitor = nullptr, GLFWwindow *share = nullptr)
+        {
+            m_window = GLFWWindow::create(width, height, title, monitor, share);
+            m_window->set_user_pointer(this);
+            glfwSetKeyCallback(m_window->get_window(), _glfw_key_callback);
+            glfwSetFramebufferSizeCallback(m_window->get_window(), _glfw_framebuffer_size_callback);
+        }
+
+        ~Window()
+        {
+            m_window.reset();
+        }
+
+    protected:
+        void _handle_event(const base::EventRef &) {}
 
     public:
+        const GLFWWindowRef &get_window() const { return m_window; }
         bool is_open() const { return !m_window->should_close(); }
         glm::ivec2 get_position() const { return m_window->get_pos(); }
         glm::ivec2 get_size() const { return m_window->get_size(); }
